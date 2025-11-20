@@ -165,6 +165,7 @@
                 {% endwith %}
 
                 <form method="POST" action="{{ url_for('auth.login') }}">
+                    {{ csrf_token() }}
                     <div class="mb-3">
                         <label class="form-label"><i class="bi bi-person"></i> Username</label>
                         <input type="text" class="form-control" name="username" required autofocus>

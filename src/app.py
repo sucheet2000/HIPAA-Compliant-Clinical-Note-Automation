@@ -7,6 +7,7 @@ import os
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -24,6 +25,10 @@ def create_app():
     app.config['DEBUG'] = os.getenv('FLASK_DEBUG', False) == 'True'
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['JSON_SORT_KEYS'] = False
+
+    # Flask-WTF CSRF Protection
+    csrf = CSRFProtect()
+    csrf.init_app(app)
 
     # Flask-Login configuration
     login_manager = LoginManager()

@@ -224,6 +224,7 @@
             </div>
             <div class="card-body">
                 <form id="review-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="mb-3">
                         <label class="form-label">Decision</label>
                         <div class="btn-group w-100" role="group">
@@ -302,11 +303,13 @@ document.getElementById('review-form').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const action = formData.get('action');
     const notes = formData.get('notes');
+    const csrfToken = formData.get('csrf_token');
 
     fetch(`/api/notes/{{ transaction_id }}/review`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({
             action: action,
