@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}About - Clinical Notes Review{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="mb-2">
+            <i class="bi bi-info-circle"></i> About
+        </h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- System Information -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-medical"></i> System Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <h6>HIPAA-Compliant Clinical Notes Review System</h6>
+                <p class="text-muted">
+                    A secure, healthcare-focused application for reviewing and validating clinical note extractions.
+                    This system provides a human-in-the-loop interface for clinicians to review AI-generated clinical data
+                    with complete audit trails for regulatory compliance.
+                </p>
+
+                <h6 class="mt-4">Key Features</h6>
+                <ul class="mb-0">
+                    <li><strong>De-identification</strong> - Automatic masking of Protected Health Information (PHI) before processing</li>
+                    <li><strong>Claude AI Integration</strong> - Intelligent extraction of clinical entities using Claude API</li>
+                    <li><strong>FHIR Standards</strong> - Structured data conversion to FHIR R4 format for interoperability</li>
+                    <li><strong>Audit Logging</strong> - Complete transaction history and compliance trail in PostgreSQL</li>
+                    <li><strong>Human Review</strong> - Clinician dashboard for validating extractions</li>
+                    <li><strong>Confidence Scoring</strong> - Field-level confidence metrics for quality assurance</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-diagram-3"></i> Architecture
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-code-slash"></i> Tech Stack
+                </p>
+                <div class="row text-center">
+                    <div class="col-md-4 mb-3">
+                        <div class="bg-light p-3 rounded">
+                            <strong>Backend</strong><br>
+                            <small class="text-muted">Python + Flask</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="bg-light p-3 rounded">
+                            <strong>Databases</strong><br>
+                            <small class="text-muted">PostgreSQL + MongoDB</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="bg-light p-3 rounded">
+                            <strong>Frontend</strong><br>
+                            <small class="text-muted">Bootstrap 5 + JS</small>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="mt-4">Data Pipeline</h6>
+                <ol class="text-muted small">
+                    <li>Raw clinical conversation input</li>
+                    <li>De-identification module masks PHI</li>
+                    <li>Claude API extracts clinical entities</li>
+                    <li>FHIR transformer converts to standard format</li>
+                    <li>Clinician review and validation</li>
+                    <li>Complete audit trail in PostgreSQL</li>
+                    <li>FHIR bundles stored in MongoDB</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Security & Compliance -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-shield-check"></i> Security & Compliance
+                </h5>
+            </div>
+            <div class="card-body">
+                <h6>HIPAA Compliance Features</h6>
+                <ul class="text-muted small mb-4">
+                    <li><i class="bi bi-check-circle"></i> De-identification (Safe Harbor method)</li>
+                    <li><i class="bi bi-check-circle"></i> Immutable audit logs with PostgreSQL</li>
+                    <li><i class="bi bi-check-circle"></i> Role-based access control</li>
+                    <li><i class="bi bi-check-circle"></i> Encrypted data at rest and in transit</li>
+                    <li><i class="bi bi-check-circle"></i> Transaction correlation for compliance</li>
+                    <li><i class="bi bi-check-circle"></i> Complete review history tracking</li>
+                </ul>
+
+                <h6>Docker Deployment</h6>
+                <p class="text-muted small">
+                    The entire system runs in Docker containers with PostgreSQL for audit logs and MongoDB for FHIR data storage.
+                    See <code>DOCKER_SETUP.md</code> for deployment instructions.
+                </p>
+            </div>
+        </div>
+
+        <!-- Support -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-question-circle"></i> Documentation
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">
+                    For more information, see the project documentation:
+                </p>
+                <ul class="text-muted small">
+                    <li><strong>README.md</strong> - Project overview</li>
+                    <li><strong>DOCKER_SETUP.md</strong> - Docker deployment guide</li>
+                    <li><strong>PHASE2_COMPLETION.md</strong> - Database integration details</li>
+                    <li><strong>SETUP.md</strong> - Initial setup instructions</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Note:</strong> This is a demonstration system for educational purposes. For production use with real PHI,
+            additional security measures and formal compliance reviews are required.
+        </div>
+    </div>
+</div>
+{% endblock %}
