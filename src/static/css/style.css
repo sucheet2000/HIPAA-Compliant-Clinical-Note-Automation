@@ -326,25 +326,70 @@ footer {
     }
 }
 
-/* Dark Mode Support (future) */
+/* Ensure Light Theme with Maximum Readability */
+body {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+}
+
+.card {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+.card-body {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+.card-header {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+}
+
+.table {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+}
+
+.table thead th {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+}
+
+.table tbody td {
+    color: #212529 !important;
+}
+
+code, .font-monospace, pre {
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+.form-control, .form-select, textarea {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+.form-control::placeholder, textarea::placeholder {
+    color: #6c757d !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Override any system dark mode preferences */
 @media (prefers-color-scheme: dark) {
+    * {
+        background-color: inherit !important;
+        color: inherit !important;
+    }
+
     body {
-        background-color: #1a1a1a;
-        color: #f0f0f0;
-    }
-
-    .card {
-        background-color: #2d2d2d;
-        color: #f0f0f0;
-    }
-
-    .table {
-        background-color: #2d2d2d;
-        color: #f0f0f0;
-    }
-
-    code {
-        background-color: #1a1a1a;
-        color: #f0f0f0;
+        background-color: #f8f9fa !important;
+        color: #212529 !important;
     }
 }
