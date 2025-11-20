@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS audit_logs (
     id SERIAL PRIMARY KEY,
     timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    transaction_id UUID NOT NULL,
+    transaction_id UUID NOT NULL UNIQUE,
     event_type VARCHAR(50) NOT NULL,
     status VARCHAR(20) NOT NULL,
     user_id VARCHAR(100),
