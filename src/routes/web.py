@@ -4,6 +4,7 @@ Renders templates for user-facing pages
 """
 
 from flask import Blueprint, render_template, request, redirect, url_for
+from flask_login import login_required, current_user
 from services.note_service import get_note_service
 from services.review_service import get_review_service
 
@@ -20,6 +21,7 @@ def index():
 
 
 @web_bp.route('/dashboard')
+@login_required
 def dashboard():
     """Dashboard with statistics and overview"""
     try:
@@ -30,6 +32,7 @@ def dashboard():
 
 
 @web_bp.route('/review-queue')
+@login_required
 def review_queue():
     """Review queue - list of notes needing review"""
     try:
@@ -58,6 +61,7 @@ def review_queue():
 
 
 @web_bp.route('/notes/<transaction_id>')
+@login_required
 def note_detail(transaction_id):
     """Detailed view of a specific note"""
     try:
@@ -84,6 +88,7 @@ def note_detail(transaction_id):
 
 
 @web_bp.route('/notes')
+@login_required
 def notes_list():
     """List all processed notes"""
     try:
@@ -106,6 +111,7 @@ def notes_list():
 
 
 @web_bp.route('/approvals')
+@login_required
 def approvals():
     """View all approved notes"""
     try:
@@ -116,6 +122,7 @@ def approvals():
 
 
 @web_bp.route('/rejections')
+@login_required
 def rejections():
     """View all rejected notes"""
     try:
@@ -126,6 +133,7 @@ def rejections():
 
 
 @web_bp.route('/escalations')
+@login_required
 def escalations():
     """View flagged notes awaiting escalation"""
     try:
@@ -136,6 +144,7 @@ def escalations():
 
 
 @web_bp.route('/search')
+@login_required
 def search():
     """Search notes by transaction ID or confidence"""
     try:
@@ -170,6 +179,7 @@ def search():
 
 
 @web_bp.route('/clinician/<clinician_id>')
+@login_required
 def clinician_profile(clinician_id):
     """View clinician profile and statistics"""
     try:

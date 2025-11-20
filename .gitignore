@@ -62,3 +62,4 @@ src/logs/*.json
 # OS
 .DS_Store
 Thumbs.db
+SIMPLE_EXPLANATION.html

@@ -6,6 +6,7 @@ Provides human-in-the-loop interface for clinician review and validation
 import os
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
+from flask_login import LoginManager
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -24,6 +25,23 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     app.config['JSON_SORT_KEYS'] = False
 
+    # Flask-Login configuration
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Please log in to access this page.'
+
+    # User loader for Flask-Login
+    from models.user import User
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        """Load user from database by ID"""
+        try:
+            return User.get_user_by_id(int(user_id))
+        except (ValueError, TypeError):
+            return None
+
     # Enable CORS for API
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
@@ -33,9 +51,11 @@ def create_app():
     # Register blueprints
     from routes.api import api_bp
     from routes.web import web_bp
+    from routes.auth import auth_bp
 
     app.register_blueprint(api_bp)
     app.register_blueprint(web_bp)
+    app.register_blueprint(auth_bp)
 
     # Health check endpoint
     @app.route('/health')
