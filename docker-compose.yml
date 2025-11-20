@@ -44,31 +44,33 @@ services:
       - clinical_network
 
   # Python application
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: clinical_notes_app
-    environment:
-      PYTHONUNBUFFERED: 1
-      DATABASE_URL: postgresql://clinicaluser:secure_password_change_me@postgres:5432/clinical_notes_audit
-      MONGODB_URL: mongodb://clinicaluser:secure_password_change_me@mongodb:27017/clinical_notes_fhir?authSource=admin
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      LOG_DIR: /app/logs
-    depends_on:
-      postgres:
-        condition: service_healthy
-      mongodb:
-        condition: service_healthy
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./src:/app/src
-      - ./logs:/app/logs
-      - ./output:/app/output
-    networks:
-      - clinical_network
-    command: python src/main.py
+  # Note: Run locally with: python src/main.py && python src/app.py
+  # Docker-compose databases only configuration
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: clinical_notes_app
+  #   environment:
+  #     PYTHONUNBUFFERED: 1
+  #     DATABASE_URL: postgresql://clinicaluser:secure_password_change_me@postgres:5432/clinical_notes_audit
+  #     MONGODB_URL: mongodb://clinicaluser:secure_password_change_me@mongodb:27017/clinical_notes_fhir?authSource=admin
+  #     ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+  #     LOG_DIR: /app/logs
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     mongodb:
+  #       condition: service_healthy
+  #   ports:
+  #     - "5000:5000"
+  #   volumes:
+  #     - ./src:/app/src
+  #     - ./logs:/app/logs
+  #     - ./output:/app/output
+  #   networks:
+  #     - clinical_network
+  #   command: python src/main.py
 
 networks:
   clinical_network:
