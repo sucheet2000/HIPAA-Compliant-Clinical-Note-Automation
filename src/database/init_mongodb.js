@@ -13,7 +13,14 @@ db.createCollection('fhir_bundles', {
                 _id: { bsonType: 'objectId' },
                 transaction_id: { bsonType: 'string', description: 'Unique transaction identifier' },
                 bundle: { bsonType: 'object', description: 'FHIR Bundle resource' },
-                confidence_score: { bsonType: 'decimal', description: 'Overall confidence score' },
+                confidence_score: {
+                    anyOf: [
+                        { bsonType: 'decimal' },
+                        { bsonType: 'int' },
+                        { bsonType: 'double' }
+                    ],
+                    description: 'Overall confidence score'
+                },
                 validation_status: {
                     bsonType: 'string',
                     enum: ['passed', 'failed', 'partial'],
@@ -41,7 +48,13 @@ db.createCollection('clinical_notes', {
             properties: {
                 _id: { bsonType: 'objectId' },
                 transaction_id: { bsonType: 'string', description: 'Unique transaction identifier' },
-                original_text: { bsonType: 'string', description: 'Original clinical note (optional)' },
+                original_text: {
+                    anyOf: [
+                        { bsonType: 'string' },
+                        { bsonType: 'null' }
+                    ],
+                    description: 'Original clinical note (optional)'
+                },
                 masked_text: { bsonType: 'string', description: 'De-identified clinical note' },
                 structured_output: { bsonType: 'object', description: 'Claude extracted data' },
                 created_at: { bsonType: 'date', description: 'Creation timestamp' }
