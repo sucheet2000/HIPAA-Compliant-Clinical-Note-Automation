@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Clinical Notes Review{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-lg-12">
+        <h1 class="mb-2">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </h1>
+        <p class="text-muted">System overview and statistics</p>
+        <hr>
+    </div>
+</div>
+
+<!-- Key Metrics -->
+<div class="row g-4 mb-5">
+    <!-- Total Notes -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-2">Total Notes Processed</p>
+                        <h3 class="mb-0">{{ stats.total_notes }}</h3>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-file-check text-primary" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flagged for Review -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-2">Flagged for Review</p>
+                        <h3 class="mb-0 text-warning">{{ stats.flagged_count }}</h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-exclamation-circle text-warning" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Low confidence (&lt;85%)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviewed -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-2">Already Reviewed</p>
+                        <h3 class="mb-0 text-success">{{ stats.reviewed_count }}</h3>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
+                <small class="text-muted">{{ (stats.reviewed_count / stats.total_notes * 100)|round(1) }}% complete</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Review -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-2">Pending Review</p>
+                        <h3 class="mb-0 text-danger">{{ stats.pending_review }}</h3>
+                    </div>
+                    <div class="bg-danger bg-opacity-10 p-3 rounded">
+                        <i class="bi bi-hourglass-split text-danger" style="font-size: 1.5rem;"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Action needed</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Actions -->
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-success mb-3">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <h4 class="card-title">{{ stats.approvals }}</h4>
+                <p class="text-muted">Approved</p>
+                <a href="{{ url_for('web.approvals') }}" class="btn btn-sm btn-outline-success">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-danger mb-3">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <h4 class="card-title">{{ stats.rejections }}</h4>
+                <p class="text-muted">Rejected</p>
+                <a href="{{ url_for('web.rejections') }}" class="btn btn-sm btn-outline-danger">View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-4 text-warning mb-3">
+                    <i class="bi bi-arrow-up-circle"></i>
+                </div>
+                <h4 class="card-title">{{ stats.escalations }}</h4>
+                <p class="text-muted">Escalated</p>
+                <a href="{{ url_for('web.escalations') }}" class="btn btn-sm btn-outline-warning">View</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4">
+    <!-- Approval Rate -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-percent"></i> Approval Rate
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div style="flex: 1;">
+                        <div class="progress" style="height: 30px;">
+                            <div class="progress-bar bg-success" style="width: {{ (stats.approval_rate * 100)|round(1) }}%;">
+                                {{ (stats.approval_rate * 100)|round(1) }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <small class="text-muted mt-2">
+                    {{ stats.approvals }} approved out of {{ stats.reviewed_count }} reviewed
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confidence Statistics -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up"></i> Confidence Scores
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <p class="text-muted small">Average</p>
+                        <h4 class="mb-0">{{ (stats.average_confidence * 100)|round(1) }}%</h4>
+                    </div>
+                    <div class="col-4">
+                        <p class="text-muted small">Minimum</p>
+                        <h4 class="mb-0">{{ (stats.min_confidence * 100)|round(1) }}%</h4>
+                    </div>
+                    <div class="col-4">
+                        <p class="text-muted small">Maximum</p>
+                        <h4 class="mb-0">{{ (stats.max_confidence * 100)|round(1) }}%</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-5">
+    <div class="col-lg-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('web.review_queue') }}" class="btn btn-lg btn-primary me-2">
+                    <i class="bi bi-exclamation-circle"></i> Start Reviewing Flagged Notes
+                </a>
+                <a href="{{ url_for('web.notes_list') }}" class="btn btn-lg btn-outline-secondary">
+                    <i class="bi bi-list-check"></i> View All Notes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

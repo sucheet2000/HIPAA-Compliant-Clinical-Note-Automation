@@ -1,0 +1,79 @@
+version: '3.9'
+
+services:
+  # PostgreSQL for audit logs and transaction data
+  postgres:
+    image: postgres:15-alpine
+    container_name: clinical_notes_postgres
+    environment:
+      POSTGRES_USER: clinicaluser
+      POSTGRES_PASSWORD: secure_password_change_me
+      POSTGRES_DB: clinical_notes_audit
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/database/init_postgres.sql:/docker-entrypoint-initdb.d/01_init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinicaluser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinical_network
+
+  # MongoDB for FHIR bundle storage
+  mongodb:
+    image: mongo:7
+    container_name: clinical_notes_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: clinicaluser
+      MONGO_INITDB_ROOT_PASSWORD: secure_password_change_me
+      MONGO_INITDB_DATABASE: clinical_notes_fhir
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./src/database/init_mongodb.js:/docker-entrypoint-initdb.d/01_init.js
+    healthcheck:
+      test: echo 'db.adminCommand("ping")' | mongosh -u clinicaluser -p secure_password_change_me
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinical_network
+
+  # Python application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: clinical_notes_app
+    environment:
+      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgresql://clinicaluser:secure_password_change_me@postgres:5432/clinical_notes_audit
+      MONGODB_URL: mongodb://clinicaluser:secure_password_change_me@mongodb:27017/clinical_notes_fhir?authSource=admin
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      LOG_DIR: /app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./src:/app/src
+      - ./logs:/app/logs
+      - ./output:/app/output
+    networks:
+      - clinical_network
+    command: python src/main.py
+
+networks:
+  clinical_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongodb_data:

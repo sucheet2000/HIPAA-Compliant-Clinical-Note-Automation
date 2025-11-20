@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}All Notes - Clinical Notes{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-lg-12">
+        <h1 class="mb-2">
+            <i class="bi bi-list-check"></i> All Notes
+        </h1>
+        <p class="text-muted">Showing {{ notes|length }} of {{ total }} processed notes</p>
+        <hr>
+    </div>
+</div>
+
+{% if notes|length > 0 %}
+<div class="table-responsive">
+    <table class="table table-hover border-0 shadow-sm table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Transaction ID</th>
+                <th>Confidence</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for note in notes %}
+            <tr>
+                <td><code class="small">{{ note.transaction_id[:16] }}...</code></td>
+                <td>
+                    <span class="badge {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning{% else %}bg-danger{% endif %}">
+                        {{ (note.confidence_score * 100)|round(1) }}%
+                    </span>
+                </td>
+                <td>
+                    <span class="badge bg-secondary">{{ note.validation_status|capitalize }}</span>
+                </td>
+                <td><small class="text-muted">{{ note.created_at[:10] }}</small></td>
+                <td>
+                    <a href="{{ url_for('web.note_detail', transaction_id=note.transaction_id) }}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if pages > 1 %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1">First</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page - 1 }}">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for p in range(max(1, page - 2), min(pages + 1, page + 3)) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+
+        {% if page < pages %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page + 1 }}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ pages }}">Last</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info text-center py-5">
+    <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.5;"></i>
+    <h4 class="mt-3">No Notes Available</h4>
+    <p class="text-muted mb-0">No notes have been processed yet.</p>
+</div>
+{% endif %}
+{% endblock %}
