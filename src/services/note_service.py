@@ -6,6 +6,7 @@ Handles retrieval and filtering of notes from MongoDB and PostgreSQL
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 import json
+from bson.decimal128 import Decimal128
 
 try:
     from modules.database import get_mongodb_connection, get_postgres_connection
@@ -20,6 +21,16 @@ class NoteService:
     def __init__(self):
         self.mongodb = get_mongodb_connection() if DB_AVAILABLE else None
         self.postgres = get_postgres_connection() if DB_AVAILABLE else None
+
+    def _convert_decimals(self, obj: Any) -> Any:
+        """Recursively convert Decimal128 to float"""
+        if isinstance(obj, Decimal128):
+            return float(obj.to_decimal())
+        elif isinstance(obj, dict):
+            return {k: self._convert_decimals(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_decimals(i) for i in obj]
+        return obj
 
     def get_all_notes(self, limit: int = 100, offset: int = 0) -> Dict[str, Any]:
         """
@@ -55,6 +66,9 @@ class NoteService:
                     note['created_at'] = note['created_at'].isoformat()
                 if 'updated_at' in note:
                     note['updated_at'] = note['updated_at'].isoformat()
+            
+            # Convert Decimal128 to float
+            notes = self._convert_decimals(notes)
 
             return {
                 'notes': notes,
@@ -99,6 +113,9 @@ class NoteService:
                 note['_id'] = str(note['_id'])
                 if 'created_at' in note:
                     note['created_at'] = note['created_at'].isoformat()
+
+            # Convert Decimal128 to float
+            flagged = self._convert_decimals(flagged)
 
             return flagged
         except Exception as e:
@@ -148,7 +165,7 @@ class NoteService:
                 'review_history': reviews
             }
 
-            return result
+            return self._convert_decimals(result)
         except Exception as e:
             print(f"❌ Error fetching note {transaction_id}: {e}")
             return None
@@ -196,7 +213,7 @@ class NoteService:
                 }
             ]
             stats = list(bundles.aggregate(pipeline))
-            confidence_stats = stats[0] if stats else {}
+            confidence_stats = self._convert_decimals(stats[0]) if stats else {}
 
             return {
                 'total_notes': total_notes,
@@ -211,6 +228,7 @@ class NoteService:
                 'min_confidence': confidence_stats.get('min_confidence', 0),
                 'max_confidence': confidence_stats.get('max_confidence', 0)
             }
+            return self._convert_decimals(stats_result)
         except Exception as e:
             print(f"❌ Error fetching statistics: {e}")
             return self._empty_stats()

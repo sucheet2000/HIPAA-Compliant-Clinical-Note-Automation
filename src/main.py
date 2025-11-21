@@ -20,7 +20,12 @@ from modules.fhir_transformer import create_fhir_transformer
 try:
     from modules.database import get_mongodb_connection
     DB_AVAILABLE = True
-except (ImportError, Exception):
+    print("✅ Database module imported successfully")
+except ImportError as e:
+    print(f"⚠️  Database module import failed: {e}")
+    DB_AVAILABLE = False
+except Exception as e:
+    print(f"⚠️  Database module error: {e}")
     DB_AVAILABLE = False
 
 
@@ -241,22 +246,24 @@ class ClinicalNoteProcessor:
             try:
                 mongodb = get_mongodb_connection()
                 fhir_bundle = result['outputs']['fhir_bundle']
-                confidence_score = result['outputs'].get('confidence_score', 0)
+                # Extract confidence score from claude_processing stage and normalize to 0-1
+                raw_score = result['stages'].get('claude_processing', {}).get('confidence_score', 0)
+                confidence_score = float(raw_score) / 100.0 if raw_score > 1 else float(raw_score)
 
                 # Save the FHIR bundle
                 mongodb.save_fhir_bundle(
                     transaction_id=transaction_id,
                     bundle=fhir_bundle,
                     confidence_score=confidence_score,
-                    validation_status='passed' if result['outputs'].get('validation_passed', False) else 'failed'
+                    validation_status='passed' if result['stages'].get('fhir_transformation', {}).get('validation_passed', False) else 'failed'
                 )
 
                 # Save clinical note metadata
                 mongodb.save_clinical_note(
                     transaction_id=transaction_id,
-                    masked_text=result['stages'].get('deidentification', {}).get('masked_text', ''),
+                    masked_text=result['outputs'].get('masked_conversation', ''),
                     structured_output=result['outputs'].get('structured_clinical_data', {}),
-                    original_text=None  # We don't store original PHI
+                    original_text=''  # Empty string instead of None for schema validation
                 )
 
                 print(f"✓ FHIR bundle saved to MongoDB")

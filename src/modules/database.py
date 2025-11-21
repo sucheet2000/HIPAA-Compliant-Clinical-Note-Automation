@@ -7,6 +7,7 @@ import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from pymongo import MongoClient
+from bson.decimal128 import Decimal128
 from typing import Optional, Dict, Any
 from datetime import datetime
 
@@ -144,7 +145,7 @@ class MongoDBConnection:
             document = {
                 'transaction_id': transaction_id,
                 'bundle': bundle,
-                'confidence_score': confidence_score,
+                'confidence_score': Decimal128(str(confidence_score)),
                 'validation_status': validation_status,
                 'created_at': datetime.utcnow(),
                 'updated_at': datetime.utcnow()

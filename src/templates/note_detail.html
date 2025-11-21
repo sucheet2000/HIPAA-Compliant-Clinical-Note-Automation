@@ -15,7 +15,8 @@
                 </p>
             </div>
             <div>
-                <span class="badge {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning text-dark{% else %}bg-danger{% endif %} fs-6">
+                <span
+                    class="badge {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning text-dark{% else %}bg-danger{% endif %} fs-6">
                     {{ (note.confidence_score * 100)|round(1) }}% Confidence
                 </span>
             </div>
@@ -28,23 +29,33 @@
     <!-- Original Text -->
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-light border-bottom">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
                     <i class="bi bi-file-earmark-text"></i> De-identified Text
                 </h5>
+                <button class="btn btn-sm btn-outline-primary" id="toggleViewBtn" onclick="toggleConversationView()">
+                    <i class="bi bi-list-ul"></i> Formatted View
+                </button>
             </div>
             <div class="card-body">
                 <p class="text-muted small mb-3">
                     <i class="bi bi-shield-check"></i> This text has been de-identified with PHI removed
                 </p>
-                <div class="bg-light p-3 rounded" style="max-height: 400px; overflow-y: auto;">
+                <!-- Raw View -->
+                <div id="rawView" class="p-3 rounded border border-secondary border-opacity-25"
+                    style="max-height: 400px; overflow-y: auto; background-color: rgba(0,0,0,0.2);">
                     <p class="font-monospace small mb-0">
                         {% if note.masked_text %}
-                            {{ note.masked_text }}
+                        {{ note.masked_text }}
                         {% else %}
-                            <span class="text-muted">Original text not available</span>
+                        <span class="text-muted">Original text not available</span>
                         {% endif %}
                     </p>
+                </div>
+                <!-- Formatted View -->
+                <div id="formattedView" class="p-3 rounded border border-secondary border-opacity-25"
+                    style="max-height: 400px; overflow-y: auto; background-color: rgba(0,0,0,0.2); display: none;">
+                    <div id="formattedContent"></div>
                 </div>
             </div>
         </div>
@@ -53,29 +64,30 @@
     <!-- Field Confidences -->
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-light border-bottom">
+            <div class="card-header">
                 <h5 class="mb-0">
                     <i class="bi bi-speedometer2"></i> Field Confidence Scores
                 </h5>
             </div>
             <div class="card-body">
                 {% if note.field_confidences %}
-                    {% for field, score in note.field_confidences.items() %}
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <label class="form-label mb-0 text-capitalize">{{ field.replace('_', ' ') }}</label>
-                            <small class="badge {% if score >= 85 %}bg-success{% elif score >= 70 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
-                                {{ score|round(1) }}%
-                            </small>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar {% if score >= 85 %}bg-success{% elif score >= 70 %}bg-warning{% else %}bg-danger{% endif %}"
-                                 style="width: {{ score }}%;"></div>
-                        </div>
+                {% for field, score in note.field_confidences.items() %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label class="form-label mb-0 text-capitalize">{{ field.replace('_', ' ') }}</label>
+                        <small
+                            class="badge {% if score >= 85 %}bg-success{% elif score >= 70 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                            {{ score|round(1) }}%
+                        </small>
                     </div>
-                    {% endfor %}
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar {% if score >= 85 %}bg-success{% elif score >= 70 %}bg-warning{% else %}bg-danger{% endif %}"
+                            style="width: {{ score }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
                 {% else %}
-                    <p class="text-muted">No field confidence data available</p>
+                <p class="text-muted">No field confidence data available</p>
                 {% endif %}
             </div>
         </div>
@@ -86,7 +98,7 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-light border-bottom">
+            <div class="card-header">
                 <h5 class="mb-0">
                     <i class="bi bi-prescription2"></i> Extracted Clinical Data
                 </h5>
@@ -102,21 +114,21 @@
                         </h6>
                         {% set diagnoses = entities.get('diagnoses_problems', []) %}
                         {% if diagnoses %}
-                            <ul class="list-unstyled">
-                                {% for dx in diagnoses %}
-                                <li class="mb-2">
-                                    <span class="badge bg-info">
-                                        {% if dx is string %}
-                                            {{ dx }}
-                                        {% else %}
-                                            {{ dx.get('name', 'Unknown') }}
-                                        {% endif %}
-                                    </span>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                        <ul class="list-unstyled">
+                            {% for dx in diagnoses %}
+                            <li class="mb-2">
+                                <span class="badge bg-info">
+                                    {% if dx is string %}
+                                    {{ dx }}
+                                    {% else %}
+                                    {{ dx.get('name', 'Unknown') }}
+                                    {% endif %}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
                         {% else %}
-                            <p class="text-muted small mb-0">None documented</p>
+                        <p class="text-muted small mb-0">None documented</p>
                         {% endif %}
                     </div>
 
@@ -127,21 +139,21 @@
                         </h6>
                         {% set meds = entities.get('medication_requests_new_or_changed', []) %}
                         {% if meds %}
-                            <ul class="list-unstyled">
-                                {% for med in meds %}
-                                <li class="mb-2">
-                                    <span class="badge bg-info">
-                                        {% if med is string %}
-                                            {{ med }}
-                                        {% else %}
-                                            {{ med.get('name', 'Unknown') }}
-                                        {% endif %}
-                                    </span>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                        <ul class="list-unstyled">
+                            {% for med in meds %}
+                            <li class="mb-2">
+                                <span class="badge bg-info">
+                                    {% if med is string %}
+                                    {{ med }}
+                                    {% else %}
+                                    {{ med.get('name', 'Unknown') }}
+                                    {% endif %}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
                         {% else %}
-                            <p class="text-muted small mb-0">None documented</p>
+                        <p class="text-muted small mb-0">None documented</p>
                         {% endif %}
                     </div>
 
@@ -152,21 +164,21 @@
                         </h6>
                         {% set allergies = entities.get('allergies', []) %}
                         {% if allergies %}
-                            <ul class="list-unstyled">
-                                {% for allergy in allergies %}
-                                <li class="mb-2">
-                                    <span class="badge bg-danger">
-                                        {% if allergy is string %}
-                                            {{ allergy }}
-                                        {% else %}
-                                            {{ allergy.get('name', 'Unknown') }}
-                                        {% endif %}
-                                    </span>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                        <ul class="list-unstyled">
+                            {% for allergy in allergies %}
+                            <li class="mb-2">
+                                <span class="badge bg-danger">
+                                    {% if allergy is string %}
+                                    {{ allergy }}
+                                    {% else %}
+                                    {{ allergy.get('name', 'Unknown') }}
+                                    {% endif %}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
                         {% else %}
-                            <p class="text-muted small mb-0">None documented</p>
+                        <p class="text-muted small mb-0">None documented</p>
                         {% endif %}
                     </div>
 
@@ -177,18 +189,18 @@
                         </h6>
                         {% set vitals = note.structured_output.get('vital_signs_extracted', {}) %}
                         {% if vitals %}
-                            <table class="table table-sm mb-0">
-                                {% for vital, value in vitals.items() %}
-                                {% if value and value != 'N/A' %}
-                                <tr>
-                                    <td class="text-capitalize small">{{ vital.replace('_', ' ') }}</td>
-                                    <td class="text-end"><strong>{{ value }}</strong></td>
-                                </tr>
-                                {% endif %}
-                                {% endfor %}
-                            </table>
+                        <table class="table table-sm mb-0">
+                            {% for vital, value in vitals.items() %}
+                            {% if value and value != 'N/A' %}
+                            <tr>
+                                <td class="text-capitalize small">{{ vital.replace('_', ' ') }}</td>
+                                <td class="text-end"><strong>{{ value }}</strong></td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </table>
                         {% else %}
-                            <p class="text-muted small mb-0">No vital signs documented</p>
+                        <p class="text-muted small mb-0">No vital signs documented</p>
                         {% endif %}
                     </div>
                 </div>
@@ -201,13 +213,14 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-light border-bottom">
+            <div class="card-header">
                 <h5 class="mb-0">
                     <i class="bi bi-code-slash"></i> FHIR Bundle (JSON)
                 </h5>
             </div>
             <div class="card-body">
-                <pre class="bg-light p-3 rounded text-muted small" style="max-height: 300px; overflow-y: auto;"><code id="fhir-json">{{ note.fhir_bundle|tojson(indent=2) }}</code></pre>
+                <pre class="p-3 rounded text-muted small border border-secondary border-opacity-25"
+                    style="max-height: 300px; overflow-y: auto; background-color: rgba(0,0,0,0.2);"><code id="fhir-json">{{ note.fhir_bundle|tojson(indent=2) }}</code></pre>
             </div>
         </div>
     </div>
@@ -217,7 +230,7 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-light border-bottom">
+            <div class="card-header">
                 <h5 class="mb-0">
                     <i class="bi bi-pencil-square"></i> Submit Review
                 </h5>
@@ -237,7 +250,8 @@
                                 <i class="bi bi-x-circle"></i> Reject
                             </label>
 
-                            <input type="radio" class="btn-check" name="action" id="escalate" value="flag_for_escalation">
+                            <input type="radio" class="btn-check" name="action" id="escalate"
+                                value="flag_for_escalation">
                             <label class="btn btn-outline-warning" for="escalate">
                                 <i class="bi bi-arrow-up-circle"></i> Escalate
                             </label>
@@ -246,7 +260,8 @@
 
                     <div class="mb-3">
                         <label class="form-label">Notes (Optional)</label>
-                        <textarea class="form-control" name="notes" rows="3" placeholder="Add any comments about this review..."></textarea>
+                        <textarea class="form-control" name="notes" rows="3"
+                            placeholder="Add any comments about this review..."></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -260,35 +275,35 @@
     <!-- Review History -->
     <div class="col-lg-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-light border-bottom">
+            <div class="card-header">
                 <h5 class="mb-0">
                     <i class="bi bi-clock-history"></i> Review History
                 </h5>
             </div>
             <div class="card-body" style="max-height: 400px; overflow-y: auto;">
                 {% if reviews|length > 0 %}
-                    {% for review in reviews %}
-                    <div class="mb-3 pb-3 border-bottom">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span class="badge bg-secondary">{{ review.clinician_id }}</span>
-                            <small class="text-muted">{{ review.reviewed_at[:10] }}</small>
-                        </div>
-                        <p class="mb-1">
-                            {% if review.action == 'approve' %}
-                                <span class="badge bg-success"><i class="bi bi-check"></i> Approved</span>
-                            {% elif review.action == 'reject' %}
-                                <span class="badge bg-danger"><i class="bi bi-x"></i> Rejected</span>
-                            {% else %}
-                                <span class="badge bg-warning text-dark"><i class="bi bi-arrow-up"></i> Escalated</span>
-                            {% endif %}
-                        </p>
-                        {% if review.notes %}
-                        <small class="text-muted d-block">{{ review.notes }}</small>
-                        {% endif %}
+                {% for review in reviews %}
+                <div class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="badge bg-secondary">{{ review.clinician_id }}</span>
+                        <small class="text-muted">{{ review.reviewed_at[:10] }}</small>
                     </div>
-                    {% endfor %}
+                    <p class="mb-1">
+                        {% if review.action == 'approve' %}
+                        <span class="badge bg-success"><i class="bi bi-check"></i> Approved</span>
+                        {% elif review.action == 'reject' %}
+                        <span class="badge bg-danger"><i class="bi bi-x"></i> Rejected</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark"><i class="bi bi-arrow-up"></i> Escalated</span>
+                        {% endif %}
+                    </p>
+                    {% if review.notes %}
+                    <small class="text-muted d-block">{{ review.notes }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
                 {% else %}
-                    <p class="text-muted text-center py-4 mb-0">No reviews yet</p>
+                <p class="text-muted text-center py-4 mb-0">No reviews yet</p>
                 {% endif %}
             </div>
         </div>
@@ -296,37 +311,118 @@
 </div>
 
 <script>
-document.getElementById('review-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+    document.getElementById('review-form').addEventListener('submit', function (e) {
+        e.preventDefault();
 
-    const formData = new FormData(this);
-    const action = formData.get('action');
-    const notes = formData.get('notes');
+        const formData = new FormData(this);
+        const action = formData.get('action');
+        const notes = formData.get('notes');
 
-    fetch(`/api/notes/{{ transaction_id }}/review`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            action: action,
-            clinician_id: 'clinician_' + Math.random().toString(36).substr(2, 9),
-            notes: notes
+        fetch(`/api/notes/{{ transaction_id }}/review`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: action,
+                clinician_id: 'clinician_' + Math.random().toString(36).substr(2, 9),
+                notes: notes
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            alert('Review submitted successfully!');
-            location.reload();
-        } else {
-            alert('Error submitting review: ' + (data.error || 'Unknown error'));
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('Review submitted successfully!');
+                    location.reload();
+                } else {
+                    alert('Error submitting review: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
 
-// Syntax highlighting for JSON
-document.getElementById('fhir-json').innerHTML = document.getElementById('fhir-json').textContent;
+    // Syntax highlighting for JSON
+    document.getElementById('fhir-json').innerHTML = document.getElementById('fhir-json').textContent;
+
+    // Conversation view toggle
+    let isFormattedView = false;
+    const rawText = `{% if note.masked_text %}{{ note.masked_text }}{% endif %}`;
+
+    function toggleConversationView() {
+        isFormattedView = !isFormattedView;
+        const rawView = document.getElementById('rawView');
+        const formattedView = document.getElementById('formattedView');
+        const toggleBtn = document.getElementById('toggleViewBtn');
+
+        if (isFormattedView) {
+            rawView.style.display = 'none';
+            formattedView.style.display = 'block';
+            toggleBtn.innerHTML = '<i class="bi bi-file-text"></i> Raw View';
+            formatConversation();
+        } else {
+            rawView.style.display = 'block';
+            formattedView.style.display = 'none';
+            toggleBtn.innerHTML = '<i class="bi bi-list-ul"></i> Formatted View';
+        }
+    }
+
+    function formatConversation() {
+        const content = document.getElementById('formattedContent');
+
+        // Parse conversation into physician/patient exchanges
+        const lines = rawText.split(/(?:Physician:|Patient:)/i);
+        let html = '<div style="font-size: 0.9rem;">';
+
+        // Extract vital signs if present
+        const vitalMatch = rawText.match(/BP\s+(\d+\/\d+)|heart rate\s+(\d+)|temperature\s+([\d\.]+)/gi);
+        const vitals = vitalMatch ? vitalMatch.join(', ') : null;
+
+        let currentSpeaker = null;
+
+        lines.forEach((line, i) => {
+            line = line.trim();
+            if (!line) return;
+
+            // Detect speaker from context
+            const isFirst = i === 0 || i === 1;
+            const textBefore = rawText.substring(0, rawText.indexOf(line));
+
+            if (textBefore.toLowerCase().includes('physician:') && !currentSpeaker) {
+                currentSpeaker = 'Physician';
+            } else if (textBefore.toLowerCase().includes('patient:')) {
+                currentSpeaker = 'Patient';
+            }
+
+            // Alternate speakers
+            const speaker = (i % 2 === 0 || isFirst) ? 'Physician' : 'Patient';
+            const bgColor = speaker === 'Physician' ? 'rgba(20, 184, 166, 0.1)' : 'rgba(6, 182, 212, 0.1)';
+            const iconColor = speaker === 'Physician' ? '#14b8a6' : '#06b6d4';
+            const icon = speaker === 'Physician' ? 'person-badge' : 'person';
+
+            html += `
+                <div style="margin-bottom: 1rem; padding: 0.75rem; border-left: 3px solid ${iconColor}; background: ${bgColor}; border-radius: 0.375rem;">
+                    <div style="font-weight: 600; color: ${iconColor}; margin-bottom: 0.5rem;">
+                        <i class="bi bi-${icon}"></i> ${speaker}
+                    </div>
+                    <div style="line-height: 1.6;">${line}</div>
+                </div>
+            `;
+        });
+
+        // Add vital signs section if found
+        if (vitals) {
+            html += `
+                <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 0.375rem; border-left: 3px solid #10b981;">
+                    <div style="font-weight: 600; color: #10b981; margin-bottom: 0.5rem;">
+                        <i class="bi bi-heart-pulse"></i> Vital Signs
+                    </div>
+                    <div>${vitals}</div>
+                </div>
+            `;
+        }
+
+        html += '</div>';
+        content.innerHTML = html;
+    }
 </script>
 {% endblock %}

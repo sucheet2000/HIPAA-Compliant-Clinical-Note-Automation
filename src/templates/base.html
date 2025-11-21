@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Clinical Notes Review{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -14,9 +22,10 @@
 
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('web.index') }}">
                 <i class="bi bi-file-medical"></i> Clinical Notes Review
@@ -45,19 +54,20 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown">
                             <i class="bi bi-filter"></i> View
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{{ url_for('web.approvals') }}">
-                                <i class="bi bi-check-circle"></i> Approvals
-                            </a></li>
+                                    <i class="bi bi-check-circle"></i> Approvals
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ url_for('web.rejections') }}">
-                                <i class="bi bi-x-circle"></i> Rejections
-                            </a></li>
+                                    <i class="bi bi-x-circle"></i> Rejections
+                                </a></li>
                             <li><a class="dropdown-item" href="{{ url_for('web.escalations') }}">
-                                <i class="bi bi-arrow-up-circle"></i> Escalations
-                            </a></li>
+                                    <i class="bi bi-arrow-up-circle"></i> Escalations
+                                </a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -128,4 +138,5 @@
         setInterval(updateTime, 1000);
     </script>
 </body>
+
 </html>

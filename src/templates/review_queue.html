@@ -16,7 +16,7 @@
 {% if notes|length > 0 %}
 <div class="table-responsive">
     <table class="table table-hover border-0 shadow-sm table-striped">
-        <thead class="table-light">
+        <thead>
             <tr>
                 <th style="width: 20%;">Transaction ID</th>
                 <th style="width: 15%;">Confidence</th>
@@ -33,11 +33,13 @@
                 </td>
                 <td>
                     <div class="d-flex align-items-center">
-                        <span class="badge {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning{% else %}bg-danger{% endif %}">
+                        <span
+                            class="badge {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning{% else %}bg-danger{% endif %}">
                             {{ (note.confidence_score * 100)|round(1) }}%
                         </span>
                         <div class="progress ms-2" style="flex: 1; height: 6px;">
-                            <div class="progress-bar {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning{% else %}bg-danger{% endif %}" style="width: {{ (note.confidence_score * 100) }}%;"></div>
+                            <div class="progress-bar {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning{% else %}bg-danger{% endif %}"
+                                style="width: {{ (note.confidence_score * 100) }}%;"></div>
                         </div>
                     </div>
                 </td>
@@ -50,13 +52,16 @@
                     <small class="text-muted">{{ note.created_at[:10] }}</small>
                 </td>
                 <td>
-                    <a href="{{ url_for('web.note_detail', transaction_id=note.transaction_id) }}" class="btn btn-sm btn-outline-primary">
+                    <a href="{{ url_for('web.note_detail', transaction_id=note.transaction_id) }}"
+                        class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-eye"></i> Review
                     </a>
-                    <button class="btn btn-sm btn-outline-success quick-approve" data-transaction-id="{{ note.transaction_id }}">
+                    <button class="btn btn-sm btn-outline-success quick-approve"
+                        data-transaction-id="{{ note.transaction_id }}">
                         <i class="bi bi-check"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-danger quick-reject" data-transaction-id="{{ note.transaction_id }}">
+                    <button class="btn btn-sm btn-outline-danger quick-reject"
+                        data-transaction-id="{{ note.transaction_id }}">
                         <i class="bi bi-x"></i>
                     </button>
                 </td>
@@ -85,14 +90,13 @@
         </li>
         {% endfor %}
 
-        {% if page < pages %}
-        <li class="page-item">
+        {% if page < pages %} <li class="page-item">
             <a class="page-link" href="?page={{ page + 1 }}">Next</a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="?page={{ pages }}">Last</a>
-        </li>
-        {% endif %}
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ pages }}">Last</a>
+            </li>
+            {% endif %}
     </ul>
 </nav>
 {% endif %}
@@ -106,39 +110,39 @@
 {% endif %}
 
 <script>
-document.querySelectorAll('.quick-approve').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const transactionId = this.dataset.transactionId;
-        submitReview(transactionId, 'approve');
+    document.querySelectorAll('.quick-approve').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const transactionId = this.dataset.transactionId;
+            submitReview(transactionId, 'approve');
+        });
     });
-});
 
-document.querySelectorAll('.quick-reject').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const transactionId = this.dataset.transactionId;
-        submitReview(transactionId, 'reject');
+    document.querySelectorAll('.quick-reject').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const transactionId = this.dataset.transactionId;
+            submitReview(transactionId, 'reject');
+        });
     });
-});
 
-function submitReview(transactionId, action) {
-    if (!confirm(`Are you sure you want to ${action} this note?`)) return;
+    function submitReview(transactionId, action) {
+        if (!confirm(`Are you sure you want to ${action} this note?`)) return;
 
-    fetch(`/api/notes/${transactionId}/review`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            action: action,
-            clinician_id: 'clinician_' + Math.random().toString(36).substr(2, 9)
+        fetch(`/api/notes/${transactionId}/review`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: action,
+                clinician_id: 'clinician_' + Math.random().toString(36).substr(2, 9)
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(`Review submitted: ${action.toUpperCase()}`);
-        location.reload();
-    })
-    .catch(error => console.error('Error:', error));
-}
+            .then(response => response.json())
+            .then(data => {
+                alert(`Review submitted: ${action.toUpperCase()}`);
+                location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+    }
 </script>
 {% endblock %}

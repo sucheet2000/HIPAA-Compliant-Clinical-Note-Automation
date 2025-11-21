@@ -15,7 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./src/database/init_postgres.sql:/docker-entrypoint-initdb.d/01_init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U clinicaluser"]
+      test: [ "CMD-SHELL", "pg_isready -U clinicaluser" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -55,20 +55,22 @@ services:
       MONGODB_URL: mongodb://clinicaluser:secure_password_change_me@mongodb:27017/clinical_notes_fhir?authSource=admin
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       LOG_DIR: /app/logs
+      FLASK_DEBUG: 1
+      FLASK_ENV: development
     depends_on:
       postgres:
         condition: service_healthy
       mongodb:
         condition: service_healthy
     ports:
-      - "5000:5000"
+      - "5001:5000"
     volumes:
       - ./src:/app/src
       - ./logs:/app/logs
       - ./output:/app/output
     networks:
       - clinical_network
-    command: python src/main.py
+    command: sh -c "cd src && python main.py && python app.py"
 
 networks:
   clinical_network:

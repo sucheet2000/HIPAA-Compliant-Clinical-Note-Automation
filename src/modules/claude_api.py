@@ -187,15 +187,97 @@ Rules:
 
     def _get_user_message(self, masked_conversation: str) -> str:
         """
-        Generate the user message for clinical processing
-
+        Generate the user message for clinical processing with few-shot examples
+        
         Args:
             masked_conversation: The de-identified conversation text
-
+            
         Returns:
-            User message string
+            User message string with examples for better accuracy
         """
-        return f"""Extract JSON from this clinical conversation (de-identified):
+        examples = f"""
+Here are 3 examples of perfect extractions:
+
+EXAMPLE 1 - Cardiology:
+Conversation: "Patient reports chest pain for 2 days. BP 145/95, HR 88. EKG shows ST elevation. Starting aspirin 325mg, clopidogrel 75mg. Troponin pending. Likely STEMI - activating cath lab."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Chest pain x 2 days",
+    "history_of_present_illness": "Patient presents with chest pain ongoing for 2 days. EKG demonstrates ST elevation concerning for STEMI."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "145/95 mmHg",
+    "heart_rate": "88 bpm",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["ST-elevation myocardial infarction (STEMI, suspected)"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Aspirin", "dose": "325mg", "frequency": "stat", "indication": "STEMI"}},
+      {{"medication_name": "Clopidogrel", "dose": "75mg", "frequency": "daily", "indication": "STEMI"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "STEMI suspected based on chest pain and ST elevation. Aspirin and clopidogrel initiated. Troponin pending. Cath lab activated.",
+  "ai_confidence_score": 95,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 2 - Primary Care:
+Conversation: "Annual checkup. No complaints. BP 118/78, HR 72. Vaccines up to date. Continue lisinopril 10mg daily for HTN. RTC 1 year."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Annual wellness visit",
+    "history_of_present_illness": "Patient presents for routine annual checkup. No acute complaints. Chronic hypertension well-controlled on current regimen."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "118/78 mmHg",
+    "heart_rate": "72 bpm",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Hypertension (controlled)"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Lisinopril", "dose": "10mg", "frequency": "daily", "indication": "Hypertension"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "Annual wellness visit. Hypertension well-controlled on lisinopril 10mg daily. Vaccinations current. Return in 1 year.",
+  "ai_confidence_score": 98,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 3 - Pediatrics:
+Conversation: "5-year-old with fever 101.5F x 2 days, cough, runny nose. Ears clear, throat mildly red. Likely viral URI. Supportive care. Tylenol PRN. RTC if worsens."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Fever, cough, and runny nose x 2 days",
+    "history_of_present_illness": "5-year-old patient presents with fever (101.5°F) for 2 days accompanied by cough and rhinorrhea. Physical exam shows clear ears and mild throat erythema."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "N/A",
+    "heart_rate": "N/A",
+    "temperature": "101.5°F"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Viral upper respiratory infection (suspected)"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Acetaminophen (Tylenol)", "dose": "as needed", "frequency": "PRN fever/pain", "indication": "Symptomatic relief"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "Likely viral URI. Supportive care recommended. Acetaminophen PRN for fever/discomfort. Return if symptoms worsen or persist beyond 7 days.",
+  "ai_confidence_score": 92,
+  "flagged_for_review": false
+}}
+
+Now extract from this NEW conversation:
 
 {masked_conversation}
 
@@ -207,7 +289,9 @@ Return JSON with:
 - ai_confidence_score: 1-100
 - flagged_for_review: boolean
 
-Only extract stated facts."""
+Only extract stated facts. Use the examples above as guidance for format and detail level."""
+        
+        return examples
 
     def validate_output_schema(self, output: Dict[str, Any]) -> Tuple[bool, list]:
         """

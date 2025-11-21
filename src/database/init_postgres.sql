@@ -31,8 +31,7 @@ CREATE TABLE IF NOT EXISTS deidentification_events (
     redaction_counts JSONB,
     validation_safe BOOLEAN,
     validation_report JSONB,
-    timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES audit_logs(transaction_id)
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_deidentification_transaction ON deidentification_events(transaction_id);
@@ -48,8 +47,7 @@ CREATE TABLE IF NOT EXISTS claude_api_calls (
     status VARCHAR(20),
     error_message TEXT,
     confidence_score DECIMAL(5, 2),
-    timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES audit_logs(transaction_id)
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_claude_transaction ON claude_api_calls(transaction_id);
@@ -63,8 +61,7 @@ CREATE TABLE IF NOT EXISTS fhir_transformations (
     resources_created JSONB,
     validation_passed BOOLEAN,
     validation_errors TEXT,
-    timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES audit_logs(transaction_id)
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_fhir_transaction ON fhir_transformations(transaction_id);
@@ -76,8 +73,7 @@ CREATE TABLE IF NOT EXISTS clinician_reviews (
     clinician_id VARCHAR(100),
     action VARCHAR(20) NOT NULL,  -- 'approve', 'reject', 'flag_for_escalation'
     notes TEXT,
-    review_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES audit_logs(transaction_id)
+    review_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_clinician_reviews_transaction ON clinician_reviews(transaction_id);
