@@ -84,19 +84,21 @@
         </li>
         {% endif %}
 
-        {% for p in range(max(1, page - 2), min(pages + 1, page + 3)) %}
-        <li class="page-item {% if p == page %}active{% endif %}">
-            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
-        </li>
-        {% endfor %}
 
-        {% if page < pages %} <li class="page-item">
-            <a class="page-link" href="?page={{ page + 1 }}">Next</a>
+        {% set start_page = page - 2 if page - 2 > 1 else 1 %}
+        {% set end_page = page + 2 if page + 2 < pages else pages %} {% for p in range(start_page, end_page + 1) %} <li
+            class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
             </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ pages }}">Last</a>
-            </li>
-            {% endif %}
+            {% endfor %}
+
+            {% if page < pages %} <li class="page-item">
+                <a class="page-link" href="?page={{ page + 1 }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pages }}">Last</a>
+                </li>
+                {% endif %}
     </ul>
 </nav>
 {% endif %}

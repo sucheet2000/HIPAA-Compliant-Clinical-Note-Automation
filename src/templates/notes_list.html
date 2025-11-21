@@ -30,7 +30,8 @@
             <tr>
                 <td><code class="small">{{ note.transaction_id[:16] }}...</code></td>
                 <td>
-                    <span class="badge {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning{% else %}bg-danger{% endif %}">
+                    <span
+                        class="badge {% if note.confidence_score >= 0.85 %}bg-success{% elif note.confidence_score >= 0.70 %}bg-warning{% else %}bg-danger{% endif %}">
                         {{ (note.confidence_score * 100)|round(1) }}%
                     </span>
                 </td>
@@ -39,7 +40,8 @@
                 </td>
                 <td><small class="text-muted">{{ note.created_at[:10] }}</small></td>
                 <td>
-                    <a href="{{ url_for('web.note_detail', transaction_id=note.transaction_id) }}" class="btn btn-sm btn-outline-primary">
+                    <a href="{{ url_for('web.note_detail', transaction_id=note.transaction_id) }}"
+                        class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-eye"></i> View
                     </a>
                 </td>
@@ -61,20 +63,21 @@
         </li>
         {% endif %}
 
-        {% for p in range(max(1, page - 2), min(pages + 1, page + 3)) %}
-        <li class="page-item {% if p == page %}active{% endif %}">
-            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
-        </li>
-        {% endfor %}
 
-        {% if page < pages %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page + 1 }}">Next</a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="?page={{ pages }}">Last</a>
-        </li>
-        {% endif %}
+        {% set start_page = page - 2 if page - 2 > 1 else 1 %}
+        {% set end_page = page + 2 if page + 2 < pages else pages %} {% for p in range(start_page, end_page + 1) %} <li
+            class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+
+            {% if page < pages %} <li class="page-item">
+                <a class="page-link" href="?page={{ page + 1 }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pages }}">Last</a>
+                </li>
+                {% endif %}
     </ul>
 </nav>
 {% endif %}
