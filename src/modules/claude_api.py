@@ -277,6 +277,184 @@ Correct JSON:
   "flagged_for_review": false
 }}
 
+EXAMPLE 4 - Emergency Medicine:
+Conversation: "22-year-old male, MVA, GCS 15. C-spine clear. Right forearm deformity, neurovascularly intact. X-ray shows distal radius fracture. Morphine 4mg IV given. Splinted, orthopedics consulted. Admit for ORIF tomorrow."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Right forearm injury after motor vehicle accident",
+    "history_of_present_illness": "22-year-old male presents via EMS after motor vehicle accident. Alert and oriented, GCS 15. C-spine cleared clinically. Reports right forearm pain and deformity. Neurovascular exam intact distally."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "N/A",
+    "heart_rate": "N/A",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Distal radius fracture (confirmed on x-ray)"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Morphine", "dose": "4mg", "frequency": "IV once", "indication": "Pain management"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "Distal radius fracture confirmed on imaging. Pain controlled with morphine 4mg IV. Forearm splinted. Orthopedics consulted for open reduction internal fixation. Admit for ORIF scheduled tomorrow.",
+  "ai_confidence_score": 96,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 5 - Orthopedics:
+Conversation: "Follow-up post-ACL repair 6 weeks ago. ROM improved, minimal effusion. Doing PT 3x/week. Continue weight-bearing as tolerated. Advance exercises. RTC 6 weeks for return-to-sport clearance."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Post-operative follow-up after ACL reconstruction",
+    "history_of_present_illness": "Patient presents for 6-week post-op check after ACL repair. Reports good progress with physical therapy 3 times weekly. Range of motion improving with minimal knee effusion noted on exam."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "N/A",
+    "heart_rate": "N/A",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Status post ACL reconstruction"],
+    "medication_requests_new_or_changed": [],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "6-week post-ACL repair with good recovery progress. Minimal effusion, ROM improving. Continue weight-bearing as tolerated and advance PT exercises. Return in 6 weeks for return-to-sport clearance evaluation.",
+  "ai_confidence_score": 94,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 6 - Dermatology:
+Conversation: "Patient with pigmented lesion on back, asymmetric borders, 8mm. Suspicious for melanoma. Excisional biopsy performed with 2mm margins. Pathology pending. Discussed staging if positive. RTC 2 weeks for results."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Pigmented skin lesion on back",
+    "history_of_present_illness": "Patient presents with concerning pigmented lesion on back noted during self-exam. Lesion measures 8mm with asymmetric borders, raising suspicion for melanoma."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "N/A",
+    "heart_rate": "N/A",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Pigmented skin lesion, suspicious for melanoma (pending pathology)"],
+    "medication_requests_new_or_changed": [],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "Suspicious pigmented lesion on back. Excisional biopsy performed with 2mm margins. Pathology pending. Discussed potential staging workup if melanoma confirmed. Return in 2 weeks for pathology results and further management.",
+  "ai_confidence_score": 93,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 7 - OB/GYN:
+Conversation: "28 weeks pregnant, routine prenatal. BP 118/76, FHR 145, fundal height 28cm. Glucose tolerance test normal. Tdap vaccine given. Discussed kick counts. RTC 2 weeks. No concerns."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Routine prenatal visit at 28 weeks gestation",
+    "history_of_present_illness": "Patient presents for routine 28-week prenatal check. No acute complaints. Pregnancy progressing normally."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "118/76 mmHg",
+    "heart_rate": "N/A",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Pregnancy at 28 weeks gestation (normal)"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Tdap vaccine", "dose": "1 dose", "frequency": "once", "indication": "Prenatal immunization"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "28-week prenatal visit. Vital signs normal, fetal heart rate 145 bpm, fundal height appropriate at 28cm. Glucose tolerance test normal. Tdap vaccine administered. Kick counts discussed. Return in 2 weeks for routine follow-up.",
+  "ai_confidence_score": 97,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 8 - Psychiatry:
+Conversation: "Major depressive disorder follow-up. On sertraline 100mg daily x 8 weeks. Mood improved, PHQ-9 score down from 18 to 8. Sleep better. Continue current dose. Therapy ongoing. RTC 1 month."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Follow-up for major depressive disorder",
+    "history_of_present_illness": "Patient returns for follow-up of major depressive disorder after 8 weeks on sertraline 100mg daily. Reports significant mood improvement with PHQ-9 score decreasing from 18 to 8. Sleep quality has improved. Continuing outpatient therapy."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "N/A",
+    "heart_rate": "N/A",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Major depressive disorder (improving)"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Sertraline", "dose": "100mg", "frequency": "daily", "indication": "Major depressive disorder"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "Major depressive disorder with good response to sertraline 100mg daily. PHQ-9 improved from 18 to 8 over 8 weeks. Continue current medication regimen. Patient engaged in ongoing therapy. Return in 1 month for monitoring.",
+  "ai_confidence_score": 95,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 9 - Gastroenterology:
+Conversation: "GERD symptoms x 6 months. Tried antacids, minimal relief. Endoscopy shows Grade B esophagitis. H. pylori negative. Starting omeprazole 20mg BID. Lifestyle modifications discussed. Repeat endoscopy in 8 weeks if symptoms persist."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Gastroesophageal reflux disease symptoms for 6 months",
+    "history_of_present_illness": "Patient presents with 6-month history of GERD symptoms with minimal relief from over-the-counter antacids. Upper endoscopy performed showing Grade B esophagitis. H. pylori testing negative."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "N/A",
+    "heart_rate": "N/A",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Gastroesophageal reflux disease", "Grade B esophagitis"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Omeprazole", "dose": "20mg", "frequency": "twice daily", "indication": "GERD and esophagitis"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "GERD with Grade B esophagitis confirmed on endoscopy. H. pylori negative. Initiating omeprazole 20mg BID. Lifestyle modifications discussed including diet changes and elevation of head of bed. Repeat endoscopy in 8 weeks if symptoms do not improve.",
+  "ai_confidence_score": 94,
+  "flagged_for_review": false
+}}
+
+EXAMPLE 10 - Endocrinology:
+Conversation: "Type 2 diabetes follow-up. A1C down from 8.2% to 6.9% on metformin 1000mg BID. No hypoglycemia. BP 128/82. Continue current regimen. Annual eye exam scheduled. Foot check normal. RTC 3 months."
+
+Correct JSON:
+{{
+  "encounter_summary": {{
+    "chief_complaint": "Type 2 diabetes mellitus follow-up",
+    "history_of_present_illness": "Patient presents for routine diabetes management follow-up. On metformin 1000mg twice daily with good glycemic control. A1C improved from 8.2% to 6.9%. No reported hypoglycemic episodes."
+  }},
+  "vital_signs_extracted": {{
+    "blood_pressure": "128/82 mmHg",
+    "heart_rate": "N/A",
+    "temperature": "N/A"
+  }},
+  "clinical_entities": {{
+    "diagnoses_problems": ["Type 2 diabetes mellitus (controlled)"],
+    "medication_requests_new_or_changed": [
+      {{"medication_name": "Metformin", "dose": "1000mg", "frequency": "twice daily", "indication": "Type 2 diabetes"}}
+    ],
+    "allergies": []
+  }},
+  "assessment_plan_draft": "Type 2 diabetes with excellent control on metformin 1000mg BID. A1C improved from 8.2% to 6.9%. No hypoglycemia reported. Blood pressure acceptable. Annual diabetic eye exam scheduled. Foot examination normal with intact sensation. Continue current medication regimen. Return in 3 months.",
+  "ai_confidence_score": 96,
+  "flagged_for_review": false
+}}
+
 Now extract from this NEW conversation:
 
 {masked_conversation}
