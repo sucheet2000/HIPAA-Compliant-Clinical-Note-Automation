@@ -96,19 +96,16 @@
     <!-- Main Content -->
     <main class="py-4">
         <div class="container-fluid">
-            {% if request.args.get('success') %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle"></i> {{ request.args.get('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            {% endif %}
-
-            {% if request.args.get('error') %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-circle"></i> {{ request.args.get('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            {% endif %}
+            {# Flash messages set by Flask views — never from raw query params #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }}"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+              {% endfor %}
+            {% endwith %}
 
             {% block content %}{% endblock %}
         </div>
@@ -141,14 +138,5 @@
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
     {% block extra_js %}{% endblock %}
-
-    <script>
-        // Update current time in footer
-        function updateTime() {
-            document.getElementById('current-time').textContent = new Date().toLocaleString();
-        }
-        updateTime();
-        setInterval(updateTime, 1000);
-    </script>
 </body>
 </html>

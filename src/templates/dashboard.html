@@ -63,7 +63,7 @@
                         <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
                     </div>
                 </div>
-                <small class="text-muted">{{ (stats.reviewed_count / stats.total_notes * 100)|round(1) }}% complete</small>
+                <small class="text-muted">{{ ((stats.reviewed_count / stats.total_notes * 100) if stats.total_notes > 0 else 0)|round(1) }}% complete</small>
             </div>
         </div>
     </div>

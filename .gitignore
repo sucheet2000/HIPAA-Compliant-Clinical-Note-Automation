@@ -4,9 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
 build/
 develop-eggs/
 dist/
@@ -25,8 +22,11 @@ wheels/
 
 # Virtual environments
 venv/
-.venv
+.venv/
 env/
+ENV/
+
+# Environment / secrets — NEVER commit this file
 .env
 
 # IDE
@@ -35,7 +35,10 @@ env/
 *.swp
 *.swo
 *~
+
+# OS
 .DS_Store
+Thumbs.db
 
 # Testing
 .pytest_cache/
@@ -43,23 +46,20 @@ env/
 htmlcov/
 test_logs/
 
-# Project specific
+# Project runtime output (generated at runtime, not source code)
+src/output/
 output/
+
+# Logs (generated at runtime)
 logs/
-*.json.bak
-.env (don't commit this!)
+*.log
+src/logs/audit_log.json
+src/logs/transaction_log.json
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
 
-# Logs (but track log files directory structure)
-*.log
-logs/*.log
-src/logs/*.json
-
-# OS
-.DS_Store
-Thumbs.db
+# Static explanation file
 SIMPLE_EXPLANATION.html

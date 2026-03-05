@@ -290,18 +290,31 @@ function initializePopovers() {
 }
 
 /**
+ * Footer clock — updates the #current-time span every second.
+ * Moved from an inline <script> in base.html so the page passes CSP.
+ */
+function startFooterClock() {
+    const el = document.getElementById('current-time');
+    if (!el) return;
+    const tick = () => { el.textContent = new Date().toLocaleString(); };
+    tick();
+    setInterval(tick, 1000);
+}
+
+/**
  * Document ready handler
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Clinical Notes Review UI initialized');
-
     // Initialize Bootstrap components
     initializeTooltips();
     initializePopovers();
 
-    // Setup global error handler for alerts
-    window.addEventListener('error', function(e) {
-        console.error('Global error:', e.error);
+    // Start footer clock
+    startFooterClock();
+
+    // Setup global error handler for unhandled rejections
+    window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled promise rejection:', e.reason);
     });
 });
 
